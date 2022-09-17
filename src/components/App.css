@@ -89,6 +89,13 @@ code {
   right: 5rem;
 }
 
+.connectionStatus {
+  position: fixed;
+  right: 3rem;
+  top: 2rem;
+  width: 2rem;
+}
+
 button {
   font-size: 2rem;
   padding: 0.2em;

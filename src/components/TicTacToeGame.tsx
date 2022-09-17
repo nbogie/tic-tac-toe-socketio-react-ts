@@ -5,11 +5,14 @@ import 'react-toastify/dist/ReactToastify.css';
 import io, { Socket } from "socket.io-client"
 import { getWinStatus, makeInitialGameState } from '../game';
 import { Cell, CellStatus, GameState, PlayerId } from '../types';
+type ConnectionStatus = "connected" | "disconnected";
+
 export function TicTacToeGame() {
 
     const [gameState, setGameState] = useState(makeInitialGameState())
     const [playerId, setPlayerId] = useState<PlayerId | null>(null);
     const [socket, setSocket] = useState<Socket>(null!)
+    const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>("disconnected")
 
     const winStatus = getWinStatus(gameState);
 
@@ -43,6 +46,8 @@ export function TicTacToeGame() {
         newSocket.prependAnyOutgoing((...args) => { console.log("socketio outgoing: ", args) });
         newSocket.prependAny((...args) => { console.log("socketio incoming: ", args) });
         //register specific listeners
+        newSocket.on("connect", () => { console.log("connected"); setConnectionStatus("connected") });
+        newSocket.on("disconnect", () => { console.log("disconnected"); setConnectionStatus("disconnected") });
         newSocket.on("update", rxUpdate);
         newSocket.on("givePlayerId", rxPlayerId);
         newSocket.on("noSpaceInGame", rxNoSpaceInGame);
@@ -107,6 +112,7 @@ export function TicTacToeGame() {
             pauseOnHover
         />
         <div className="teamBackground">{getTeamCharacter() ?? "👀"}</div>
+        <div className="connectionStatus">{connectionStatus === "connected" ? "🟢" : "🔴"}</div>
 
 
         {(winStatus.winStatus === "won" || winStatus.winStatus === "draw") &&
