@@ -92,7 +92,7 @@ code {
 button {
   font-size: 2rem;
   padding: 0.2em;
-  border: none;
-  border-radius: 3px;
+
+  border-radius: 6px;
   margin: 16px;
 }
