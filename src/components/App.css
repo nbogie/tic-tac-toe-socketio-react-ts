@@ -86,3 +86,11 @@ code {
   opacity: 0.2;
   left: 200px;
 }
+
+button {
+  font-size: 2rem;
+  padding: 0.2em;
+  border: none;
+  border-radius: 3px;
+  margin: 16px;
+}
