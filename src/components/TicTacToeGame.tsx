@@ -102,13 +102,11 @@ export function TicTacToeGame() {
 
         <ToastContainer
             position="top-right"
-            autoClose={5000}
+            autoClose={2000}
             hideProgressBar={false}
-            newestOnTop={false}
+            newestOnTop={true}
             closeOnClick
-            rtl={false}
             pauseOnFocusLoss
-            draggable
             pauseOnHover
         />
         <div className="teamBackground">{getTeamCharacter() ?? "👀"}</div>
