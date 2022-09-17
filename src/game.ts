@@ -1,5 +1,5 @@
 import { collect } from "./collect";
-import { Cell, GameState, PlayerId, WinStatus } from "./types";
+import { GameState, WinStatus } from "./types";
 
 function makeInitialGameState(): GameState {
   return {
