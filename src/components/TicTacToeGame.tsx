@@ -82,8 +82,8 @@ export function TicTacToeGame() {
         throw new Error("should be unreachable by types but st was ", st);
     }
 
-    function getTeamCharacter() {
-        return playerId ? getTeamCharacterFor(playerId) : ""
+    function getTeamCharacter(): string | null {
+        return playerId ? getTeamCharacterFor(playerId) : null
     }
 
     return <div className="ticTacToeGame">
@@ -99,13 +99,13 @@ export function TicTacToeGame() {
             draggable
             pauseOnHover
         />
-        <div className="teamBackground">{getTeamCharacter()}</div>
+        <div className="teamBackground">{getTeamCharacter() ?? "👀"}</div>
 
 
         {(winStatus.winStatus === "won" || winStatus.winStatus === "draw") &&
             <>
                 <div>Game Over!</div>
-                {winStatus.winStatus === "draw" ? "Draw" : (winStatus.winnerId === playerId ? "You won!" : "opponent won")}
+                {winStatus.winStatus === "draw" ? "Draw" : (winStatus.winnerId === playerId ? "You won!" : "You lost!")}
             </>
         }
 
@@ -113,7 +113,6 @@ export function TicTacToeGame() {
             <div className="whoseTurn">{isMyTurn ? "It's your turn!" : "opponent's turn"}</div>
         )}
         <div className="whoAmI">You are {playerId}</div>
-        <pre>{JSON.stringify(winStatus)}</pre>
 
         <div className="gameBoard">
             {gameState.cells.map(c => (
@@ -125,6 +124,7 @@ export function TicTacToeGame() {
         </div>
 
         <button onClick={handleRestartClicked}>Restart!</button>
+        <pre>{JSON.stringify(winStatus)}</pre>
     </div >
 }
 
