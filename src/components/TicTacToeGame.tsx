@@ -18,21 +18,32 @@ export function TicTacToeGame() {
     }
 
     function rxPlayerId(receivedPlayerId: PlayerId) {
+        console.log("got givePlayerId")
         setPlayerId(receivedPlayerId)
     }
 
+    function rxNoSpaceInGame() {
+        toast.error("no space in game")
+    }
+
     useEffect(() => {
+        console.log("making connection")
         const newSocket: Socket = io("http://localhost:4000");
+        console.log("made connection")
         setSocket(newSocket)
         newSocket.emit("join");
+        console.log("emitted join")
         newSocket.on("update", rxUpdate);
         newSocket.on("givePlayerId", rxPlayerId);
+        newSocket.on("noSpaceInGame", rxNoSpaceInGame);
         function unsubscribe() {
+            console.log("disconnecting from socket.io server, deregistering listeners")
             newSocket.disconnect();
             newSocket.offAny(rxUpdate)
         }
         return unsubscribe
     }, [])
+
     const isMyTurn = playerId === gameState.whoseTurn;
 
     function handleClickedCell(cell: Cell): void {
@@ -65,9 +76,10 @@ export function TicTacToeGame() {
         throw new Error("should be unreachable by types but st was ", st);
     }
 
-
+    const teamCharacter = playerId ? textForContent(playerId === "p1" ? "X" : "O") : ""
 
     return <div className="ticTacToeGame">
+
         <ToastContainer
             position="top-right"
             autoClose={5000}
@@ -79,8 +91,9 @@ export function TicTacToeGame() {
             draggable
             pauseOnHover
         />
+        <div className="teamBackground">{teamCharacter}</div>
 
-        <h1>Tic Tac Toe</h1>
+
         {(winStatus.winStatus === "won" || winStatus.winStatus === "draw") &&
             <>
                 <div>Game Over!</div>
