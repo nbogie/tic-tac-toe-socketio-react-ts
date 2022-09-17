@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -17,14 +17,20 @@ export function TicTacToeGame() {
         setGameState(receivedGameState)
     }
 
-    function rxPlayerId(receivedPlayerId: PlayerId) {
-        console.log("got givePlayerId")
-        setPlayerId(receivedPlayerId)
-    }
-
     function rxNoSpaceInGame() {
         toast.error("no space in game")
     }
+    const getTeamCharacterFor = useCallback((id: PlayerId): string => {
+        return textForContent(id === "p1" ? "X" : "O")
+    }, []);
+
+    const rxPlayerId = useCallback(
+        (receivedPlayerId: PlayerId) => {
+            console.log("got givePlayerId")
+            setPlayerId(receivedPlayerId)
+            document.title = "tictactoe " + receivedPlayerId + getTeamCharacterFor(receivedPlayerId)
+        }, [getTeamCharacterFor]
+    );
 
     useEffect(() => {
         console.log("making connection")
@@ -42,7 +48,7 @@ export function TicTacToeGame() {
             newSocket.offAny(rxUpdate)
         }
         return unsubscribe
-    }, [])
+    }, [rxPlayerId])
 
     const isMyTurn = playerId === gameState.whoseTurn;
 
@@ -76,7 +82,9 @@ export function TicTacToeGame() {
         throw new Error("should be unreachable by types but st was ", st);
     }
 
-    const teamCharacter = playerId ? textForContent(playerId === "p1" ? "X" : "O") : ""
+    function getTeamCharacter() {
+        return playerId ? getTeamCharacterFor(playerId) : ""
+    }
 
     return <div className="ticTacToeGame">
 
@@ -91,7 +99,7 @@ export function TicTacToeGame() {
             draggable
             pauseOnHover
         />
-        <div className="teamBackground">{teamCharacter}</div>
+        <div className="teamBackground">{getTeamCharacter()}</div>
 
 
         {(winStatus.winStatus === "won" || winStatus.winStatus === "draw") &&
