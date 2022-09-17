@@ -36,15 +36,19 @@ export function TicTacToeGame() {
     useEffect(() => {
         console.log("making connection")
         const newSocket: Socket = io("http://localhost:4000");
-        newSocket.prependAnyOutgoing((...args) => { console.log("socketio outgoing: ", args) });
-        newSocket.prependAny((...args) => { console.log("socketio incoming: ", args) });
         console.log("made connection")
         setSocket(newSocket)
-        newSocket.emit("join");
-        console.log("emitted join")
+
+        //register generic listeners
+        newSocket.prependAnyOutgoing((...args) => { console.log("socketio outgoing: ", args) });
+        newSocket.prependAny((...args) => { console.log("socketio incoming: ", args) });
+        //register specific listeners
         newSocket.on("update", rxUpdate);
         newSocket.on("givePlayerId", rxPlayerId);
         newSocket.on("noSpaceInGame", rxNoSpaceInGame);
+
+        newSocket.emit("join");
+
         function cleanupSocketIO() {
             console.log("disconnecting from socket.io server, deregistering listeners")
             newSocket.removeAllListeners()
