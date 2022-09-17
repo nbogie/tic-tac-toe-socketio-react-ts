@@ -109,7 +109,6 @@ export function TicTacToeGame({
             </div>
 
             <button onClick={handleRestartClicked}>Restart!</button>
-            <pre>{JSON.stringify(winStatus)}</pre>
         </div>
     );
 }
