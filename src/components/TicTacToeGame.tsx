@@ -10,6 +10,7 @@ export function TicTacToeGame() {
     const [gameState, setGameState] = useState(makeInitialGameState())
     const [playerId, setPlayerId] = useState<PlayerId | null>(null);
     const [socket, setSocket] = useState<Socket>(null!)
+
     const winStatus = getWinStatus(gameState);
 
     function rxUpdate(receivedGameState: GameState) {
@@ -35,6 +36,8 @@ export function TicTacToeGame() {
     useEffect(() => {
         console.log("making connection")
         const newSocket: Socket = io("http://localhost:4000");
+        newSocket.prependAnyOutgoing((...args) => { console.log("socketio outgoing: ", args) });
+        newSocket.prependAny((...args) => { console.log("socketio incoming: ", args) });
         console.log("made connection")
         setSocket(newSocket)
         newSocket.emit("join");
@@ -42,12 +45,12 @@ export function TicTacToeGame() {
         newSocket.on("update", rxUpdate);
         newSocket.on("givePlayerId", rxPlayerId);
         newSocket.on("noSpaceInGame", rxNoSpaceInGame);
-        function unsubscribe() {
+        function cleanupSocketIO() {
             console.log("disconnecting from socket.io server, deregistering listeners")
+            newSocket.removeAllListeners()
             newSocket.disconnect();
-            newSocket.offAny(rxUpdate)
         }
-        return unsubscribe
+        return cleanupSocketIO
     }, [rxPlayerId])
 
     const isMyTurn = playerId === gameState.whoseTurn;
