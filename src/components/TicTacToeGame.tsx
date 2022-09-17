@@ -13,7 +13,8 @@ export function TicTacToeGame() {
     const [playerId, setPlayerId] = useState<PlayerId | null>(null);
     const [socket, setSocket] = useState<Socket>(null!)
     const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>("disconnected")
-
+    const [rooms, setRooms] = useState<RoomDict>({});
+    const [roomId, setRoomId] = useState<string | null>(null)
     const winStatus = getWinStatus(gameState);
 
     function rxUpdate(receivedGameState: GameState) {
@@ -29,12 +30,25 @@ export function TicTacToeGame() {
     }, []);
 
     const rxPlayerId = useCallback(
-        (receivedPlayerId: PlayerId) => {
+        (receivedPlayerId: PlayerId, receivedRoomId: string) => {
             console.log("got givePlayerId")
             setPlayerId(receivedPlayerId)
+            setRoomId(receivedRoomId)
             document.title = "tictactoe " + receivedPlayerId + getTeamCharacterFor(receivedPlayerId)
         }, [getTeamCharacterFor]
     );
+    interface Room {
+        id: string;
+    }
+
+    interface RoomDict {
+        [roomId: string]: Room;
+    }
+
+    const rxRoomsList = useCallback((roomsDict: RoomDict) => {
+        console.log("got rooms list")
+        setRooms(roomsDict);
+    }, []);
 
     useEffect(() => {
         console.log("making connection")
@@ -51,8 +65,9 @@ export function TicTacToeGame() {
         newSocket.on("update", rxUpdate);
         newSocket.on("givePlayerId", rxPlayerId);
         newSocket.on("noSpaceInGame", rxNoSpaceInGame);
+        newSocket.on("roomsList", rxRoomsList);
 
-        newSocket.emit("join");
+        newSocket.emit("listRooms");
 
         function cleanupSocketIO() {
             console.log("disconnecting from socket.io server, deregistering listeners")
@@ -60,7 +75,7 @@ export function TicTacToeGame() {
             newSocket.disconnect();
         }
         return cleanupSocketIO
-    }, [rxPlayerId])
+    }, [rxPlayerId, rxRoomsList])
 
     const isMyTurn = playerId === gameState.whoseTurn;
 
@@ -72,9 +87,8 @@ export function TicTacToeGame() {
         if (winStatus.winStatus !== "incomplete") {
             return
         }
-        console.log("cell was clicked: ", cell)
-        toast.success("sent cellClicked: " + cell.index, { autoClose: 1000 })
-        socket.emit("cellClicked", cell.index, gameState.whoseTurn)
+        toast.success(`Sending cellClicked: room:${roomId}, cell:${cell.index}`, { autoClose: 1000 })
+        socket.emit("cellClicked", roomId, cell.index, gameState.whoseTurn)
     }
 
     function handleRestartClicked() {
@@ -134,7 +148,13 @@ export function TicTacToeGame() {
             ))}
         </div>
 
+        <div>Room list
+            {Object.entries(rooms).map(([roomId, room]) => <div>
+                <button onClick={() => socket.emit("joinRoom", roomId)}>Room: {roomId}</button></div>)}
+        </div>
         <button onClick={handleRestartClicked}>Restart!</button>
+        <button onClick={() => socket.emit("createAndJoinRoom")}>Create room</button>
+        <button onClick={() => socket.emit("listRooms")}>List rooms</button>
         <pre>{JSON.stringify(winStatus)}</pre>
     </div >
 }
