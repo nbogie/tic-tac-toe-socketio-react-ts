@@ -1,5 +1,5 @@
 import { collect } from "./collect";
-import { GameState, WinStatus } from "./types";
+import { CellStatus, GameState, PlayerId, WinStatus } from "./types";
 
 function makeInitialGameState(): GameState {
   return {
@@ -39,4 +39,26 @@ function getWinStatus(gameState: GameState): WinStatus {
   }
   return { winStatus: "incomplete" };
 }
-export { makeInitialGameState, getWinStatus };
+
+function getTeamCharacterFor(id: PlayerId): string {
+  return textForContent(id === "p1" ? "X" : "O");
+}
+
+function textForContent(st: CellStatus): string {
+  if (st === "empty") {
+    return " ";
+  }
+  if (st === "X") {
+    return "🦄";
+  }
+  if (st === "O") {
+    return "🍎";
+  }
+  throw new Error("should be unreachable by types but st was ", st);
+}
+export {
+  makeInitialGameState,
+  getWinStatus,
+  getTeamCharacterFor,
+  textForContent,
+};

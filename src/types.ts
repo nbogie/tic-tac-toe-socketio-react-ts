@@ -14,3 +14,5 @@ export type WinStatus =
   | { winStatus: "won"; winnerId: PlayerId }
   | { winStatus: "draw" }
   | { winStatus: "incomplete" };
+
+export type ConnectionStatus = "connected" | "disconnected";
