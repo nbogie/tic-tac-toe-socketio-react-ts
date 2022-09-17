@@ -9,7 +9,6 @@ function makeInitialGameState(): GameState {
 }
 
 function getWinStatus(gameState: GameState): WinStatus {
-  console.log("computing win status from ", { gameState });
   const lines = [
     [0, 1, 2],
     [3, 4, 5],
