@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
-import { io, Socket } from "socket.io-client";
-import { ConnectionStatus, PlayerId } from "../types";
 import { toast } from "react-toastify";
+import { io, Socket } from "socket.io-client";
 import { getTeamCharacterFor } from "../game";
+import { ConnectionStatus, PlayerId } from "../types";
 import { TicTacToeGame } from "./TicTacToeGame";
 
 function Lobby(): JSX.Element {
