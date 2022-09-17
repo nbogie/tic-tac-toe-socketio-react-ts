@@ -7,7 +7,18 @@ body {
   -moz-osx-font-smoothing: grayscale;
   margin: 0 auto;
   max-width: 800px;
-  background: gray;
+  background: white;
+  font-size: 20pt;
+}
+
+html {
+  box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
 }
 
 code {
@@ -34,19 +45,24 @@ code {
   grid-template-rows: 1fr 1fr 1fr;
   aspect-ratio: 1;
   width: 50vh;
-  gap: 5px;
-
+  gap: 8px;
+  border-radius: 30px;
+  overflow: hidden;
 }
 
 .cell {
   aspect-ratio: 1;
-  border: 2px solid black;
   display: grid;
+  background: #333;
   place-content: center;
   font-size: 4rem;
   position: relative;
   user-select: none;
 }
+
+/* .cell:nth-child(1),.cell:nth-child(1),.cell:nth-child(1) {
+  border-right: 10px solid black;
+} */
 
 .cellIndex {
   position: absolute;
@@ -61,4 +77,12 @@ code {
 
 .whoAmI {
   font-size: 2rem;
+}
+
+.teamBackground {
+  position: fixed;
+  font-size: 30rem;
+  z-index: -1;
+  opacity: 0.2;
+  left: 200px;
 }
